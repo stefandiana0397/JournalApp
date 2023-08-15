@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.journalapp.R
 import com.journalapp.domain.model.JournalEntry
 import com.journalapp.domain.model.Resource
+import com.journalapp.domain.usecase.DeleteEntry
 import com.journalapp.domain.usecase.GetDailyGratitudeEntries
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,7 +16,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DailyListViewModel @Inject constructor(
-    private val getDailyGratitudeEntries: GetDailyGratitudeEntries
+    private val getDailyGratitudeEntries: GetDailyGratitudeEntries,
+    private val deleteEntry: DeleteEntry
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(DailyState())
@@ -29,6 +31,7 @@ class DailyListViewModel @Inject constructor(
         when (event) {
             is DailyEvent.GetEntries -> updateEntries()
             is DailyEvent.SelectEntry -> selectEntry(event.entry)
+            is DailyEvent.DeleteEntry -> deleteEntry(event.entry)
             else -> {}
         }
     }
@@ -74,9 +77,14 @@ class DailyListViewModel @Inject constructor(
 
     private fun selectEntry(entry: JournalEntry) {
         _state.update {
-            it.copy(
-                selectedEntry = entry
-            )
+            it.copy(selectedEntry = entry)
         }
+    }
+
+    private fun deleteEntry(entry: JournalEntry) {
+        viewModelScope.launch {
+            deleteEntry.execute(entry)
+        }
+        updateEntries()
     }
 }

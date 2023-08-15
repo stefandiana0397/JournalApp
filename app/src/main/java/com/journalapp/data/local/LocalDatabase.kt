@@ -1,4 +1,4 @@
-package com.journalapp.data.local.datasource
+package com.journalapp.data.local
 
 import androidx.room.Database
 import androidx.room.RoomDatabase

@@ -7,6 +7,7 @@ import com.journalapp.data.remote.EntriesDataSource
 import com.journalapp.data.remote.dto.toLocal
 import com.journalapp.domain.model.JournalEntry
 import com.journalapp.domain.model.Resource
+import com.journalapp.domain.model.ResponseType
 import com.journalapp.domain.repository.JournalRepository
 import java.io.IOException
 import javax.inject.Inject
@@ -43,5 +44,14 @@ class JournalRepositoryImpl @Inject constructor(
 
     override suspend fun loadDailyEntries(): Unit = withContext(Dispatchers.IO) {
         dataSource.loadData()
+    }
+
+    override suspend fun deleteEntry(entry: JournalEntry) = withContext(Dispatchers.IO) {
+        when (dataSource.deleteEntryData(entry)) {
+            ResponseType.SUCCESS -> {
+                journalDao.deleteEntryByProperties(entry.date, entry.summary, entry.photos, entry.tags)
+            }
+            else -> {}
+        }
     }
 }

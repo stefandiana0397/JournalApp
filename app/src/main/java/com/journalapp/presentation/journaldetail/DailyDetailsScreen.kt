@@ -42,11 +42,13 @@ import androidx.compose.ui.unit.dp
 import coil.compose.SubcomposeAsyncImage
 import com.journalapp.R
 import com.journalapp.domain.model.JournalEntry
+import com.journalapp.domain.usecase.DeleteEntry
 import com.journalapp.presentation.common.AppToolbar
 import com.journalapp.presentation.common.AppToolbarText
 import com.journalapp.presentation.common.EntryFormatter
 import com.journalapp.presentation.common.ToolbarAction
 import com.journalapp.presentation.common.components.TagComponent
+import com.journalapp.presentation.journallist.DailyEvent
 import com.journalapp.presentation.journallist.components.shimmerBrush
 import com.journalapp.presentation.ui.theme.spacingExtraSmall
 import com.journalapp.presentation.ui.theme.spacingMedium
@@ -57,6 +59,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun DailyDetailsScreen(
     journalEntry: JournalEntry,
+    onEvent: (DailyEvent) -> Unit,
     onScreenClose: () -> Unit
 ) {
     BackHandler(onBack = onScreenClose)
@@ -84,7 +87,10 @@ fun DailyDetailsScreen(
                     )
                     ToolbarAction(
                         image = Icons.Filled.Delete,
-                        onClick = {}
+                        onClick = {
+                            onEvent(DailyEvent.DeleteEntry(journalEntry))
+                            onScreenClose()
+                        }
                     )
                 }
             )

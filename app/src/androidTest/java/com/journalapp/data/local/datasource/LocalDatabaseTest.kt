@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import com.google.gson.Gson
+import com.journalapp.data.local.LocalDatabase
 import com.journalapp.data.local.converter.StringListConverter
 import com.journalapp.data.local.converter.TagConverter
 import com.journalapp.data.local.dao.JournalDao

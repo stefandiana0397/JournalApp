@@ -37,9 +37,10 @@ fun Navigation(
             )
         }
         composable(route = Screen.DailyDetailsScreen.route) {
-            state.selectedEntry?.let { it1 ->
+            state.selectedEntry?.let { entry ->
                 DailyDetailsScreen(
-                    journalEntry = it1,
+                    journalEntry = entry,
+                    onEvent = dailyViewModel::onEvent,
                     onScreenClose = { navController.navigateUp() }
                 )
             }

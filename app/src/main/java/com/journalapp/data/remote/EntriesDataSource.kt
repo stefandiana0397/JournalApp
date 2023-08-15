@@ -3,8 +3,12 @@ package com.journalapp.data.remote
 import android.content.Context
 import com.google.gson.GsonBuilder
 import com.journalapp.data.remote.dto.JournalEntryDto
+import com.journalapp.domain.model.JournalEntry
+import com.journalapp.domain.model.ResponseType
 import com.journalapp.domain.model.Tag
 import com.journalapp.domain.model.TagDeserializer
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -33,6 +37,24 @@ class EntriesDataSource(private val context: Context) {
     suspend fun saveEntriesData(newList: List<JournalEntryDto>) = accessMutex.withLock {
         delay(SERVICE_LATENCY_IN_MILLIS)
         journalList = newList
+    }
+
+    suspend fun deleteEntryData(entry: JournalEntry): ResponseType = accessMutex.withLock {
+        delay(SERVICE_LATENCY_IN_MILLIS)
+        suspendCoroutine { continuation ->
+            val entryDto = journalList.find {
+                it.date == entry.date &&
+                    it.summary == entry.summary &&
+                    it.photos == entry.photos &&
+                    it.tags == entry.tags
+            }
+            if (entryDto != null) {
+                journalList = journalList.toMutableList().apply { remove(entryDto) }
+                continuation.resume(ResponseType.SUCCESS)
+            } else {
+                continuation.resume(ResponseType.NOT_FOUND)
+            }
+        }
     }
 
     companion object {
