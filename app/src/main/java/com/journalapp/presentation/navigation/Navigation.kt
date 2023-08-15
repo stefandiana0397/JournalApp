@@ -8,6 +8,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.journalapp.presentation.MainViewModel
 import com.journalapp.presentation.journaldetail.DailyDetailsScreen
 import com.journalapp.presentation.journallist.DailyListViewModel
 import com.journalapp.presentation.journallist.components.DailyListScreen
@@ -16,6 +17,7 @@ import com.journalapp.presentation.supportlist.components.SupportScreen
 @Composable
 fun Navigation(
     navController: NavHostController,
+    mainViewModel: MainViewModel = hiltViewModel(),
     modifier: Modifier = Modifier
 ) {
     val dailyViewModel = hiltViewModel<DailyListViewModel>()

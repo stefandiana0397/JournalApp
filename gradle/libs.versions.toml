@@ -19,12 +19,20 @@ retrofit = "2.9.0"
 okhttp = "5.0.0-alpha.2"
 room = "2.5.2"
 navVersion = "2.6.0"
+coreTestKtx = "1.5.0"
 
 [libraries]
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
+
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidx-test-ext-junit" }
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso-core" }
+kotlinCoroutine = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version = "1.7.2" }
+archCore = { module = "androidx.arch.core:core-testing", version = "2.2.0" }
+mockk-android = { module = "io.mockk:mockk-android", version = "1.13.5" }
+mockk-agent = { module = "io.mockk:mockk-agent", version = "1.13.5" }
+androidx-core-ktx = { group = "androidx.test", name = "core-ktx", version.ref = "coreTestKtx" }
+
 activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activity-compose" }
 compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "compose-bom" }
 ui = { group = "androidx.compose.ui", name = "ui" }
@@ -90,5 +98,10 @@ lifecycle = [
     "lifecycle-runtime",
     "lifecycle-runtime-compose",
     "lifecycle-compiler"
+]
+
+mockk = [
+    "mockk-agent",
+    "mockk-android"
 ]
 

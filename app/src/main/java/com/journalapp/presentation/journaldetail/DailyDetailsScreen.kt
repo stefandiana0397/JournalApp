@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -122,12 +123,11 @@ fun DailyDetailsScreen(
             item {
                 if (!journalEntry.tags.isNullOrEmpty()) {
                     Spacer(modifier = Modifier.height(spacingMedium))
-                    LazyRow {
-                        itemsIndexed(journalEntry.tags) { index, item ->
+                    LazyRow(
+                        horizontalArrangement = Arrangement.spacedBy(spacingSmall)
+                    ) {
+                        items(journalEntry.tags) {item ->
                             TagComponent(tag = item)
-                            if (index < journalEntry.tags.lastIndex) {
-                                Spacer(modifier = Modifier.width(spacingSmall))
-                            }
                         }
                     }
                 }
@@ -165,7 +165,9 @@ fun MultimediaCarousel(
         )
     }
     Spacer(modifier = Modifier.height(spacingSmall))
-    LazyRow() {
+    LazyRow(
+        horizontalArrangement = Arrangement.spacedBy(spacingSmall)
+    ) {
         itemsIndexed(photos) { index, item ->
             SubcomposeAsyncImage(
                 modifier = Modifier
@@ -183,9 +185,6 @@ fun MultimediaCarousel(
                 contentScale = ContentScale.Crop,
                 onSuccess = { showShimmer = false }
             )
-            if (index < photos.lastIndex) {
-                Spacer(modifier = Modifier.width(spacingSmall))
-            }
         }
     }
 }

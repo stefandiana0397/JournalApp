@@ -22,15 +22,13 @@ import androidx.compose.ui.text.style.TextAlign
 @Composable
 fun AppToolbar(
     modifier: Modifier = Modifier,
-    title: @Composable (() -> Unit) = {},
-//    titleText: String,
-//    titleStyle: TextStyle = MaterialTheme.typography.headlineLarge,
     scrollBehavior: TopAppBarScrollBehavior? = null,
     colors: TopAppBarColors = TopAppBarDefaults.topAppBarColors(
         containerColor = Color.Transparent,
         titleContentColor = MaterialTheme.colorScheme.onSurface,
         actionIconContentColor = MaterialTheme.colorScheme.onSurface
     ),
+    title: @Composable (() -> Unit) = {},
     navIcon: @Composable (() -> Unit) = {},
     actions: @Composable RowScope.() -> Unit = {}
 ) {

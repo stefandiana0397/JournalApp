@@ -11,12 +11,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -33,17 +31,23 @@ class MainActivity : ComponentActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
             JournalAppTheme {
+                val mainViewModel = hiltViewModel<MainViewModel>()
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
                     val navController = rememberNavController()
                     Scaffold(
-                        bottomBar = { if (showBottomBar(navController)) BottomNavigation(navController = navController) },
+                        bottomBar = {
+                            if (showBottomBar(navController)) {
+                                BottomNavigation(navController = navController)
+                            }
+                        },
                         contentWindowInsets = WindowInsets(top = 0.dp)
                     ) {
                         Navigation(
                             navController = navController,
+                            mainViewModel = mainViewModel,
                             modifier = Modifier.padding(it)
                         )
                     }
@@ -61,4 +65,3 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-
