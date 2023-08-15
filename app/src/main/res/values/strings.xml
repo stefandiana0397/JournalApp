@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">JournalApp</string>
+
+    <string name="support_groups">Support Groups</string>
+    <string name="daily_gratitude">Daily Gratitude</string>
+
+    <string name="error_loading_entries">An unexpected error occurred while loading daily entries.</string>
+
+    <string name="this_week">This Week</string>
+    <string name="last_week">Last Week</string>
+    <string name="last_month">Last Month</string>
+    <string name="last_year">Last Year</string>
+    <string name="more_than_a_year_ago">More than a year ago</string>
+    <string name="more_than_a_month_ago">More than a month ago</string>
+    <string name="back">Back</string>
+</resources>

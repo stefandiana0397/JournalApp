@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="StacktraceSettings">
+    <option name="folders">
+      <set>
+        <option value="$PROJECT_DIR$/app/build/generated/ap_generated_sources/debug/out" />
+        <option value="$PROJECT_DIR$/app/build/generated/ksp/debug/kotlin" />
+        <option value="$PROJECT_DIR$/app/build/generated/res/resValues/debug" />
+        <option value="$PROJECT_DIR$/app/build/generated/source/kapt/debug" />
+        <option value="$PROJECT_DIR$/app/build/generated/source/kaptKotlin/debug" />
+        <option value="$PROJECT_DIR$/app/src/androidTest/java" />
+        <option value="$PROJECT_DIR$/app/src/main/assets" />
+        <option value="$PROJECT_DIR$/app/src/main/java" />
+        <option value="$PROJECT_DIR$/app/src/main/res" />
+        <option value="$PROJECT_DIR$/app/src/test/java" />
+      </set>
+    </option>
+    <option name="packages">
+      <set>
+        <option value="com.busapp.di" />
+        <option value="com.busapp.presentation" />
+        <option value="com.busapp.ui" />
+        <option value="com.example.compose" />
+        <option value="com.journalapp" />
+        <option value="com.journalapp.data" />
+        <option value="com.journalapp.di" />
+        <option value="com.journalapp.domain" />
+        <option value="com.journalapp.presentation" />
+        <option value="com.journalapp.ui" />
+        <option value="com.meditation.presentation" />
+        <option value="dagger.hilt.internal" />
+      </set>
+    </option>
+  </component>
+</project>
