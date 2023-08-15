@@ -21,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
+import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.journalapp.R
 import com.journalapp.presentation.ui.theme.spacingSmall
@@ -65,7 +66,7 @@ fun BottomNavigationBar(
         tonalElevation = spacingSmall
     ) {
         items.forEachIndexed { index, item ->
-            val selectedItem = item.route == backStackEntry.value?.destination?.route
+            val selectedItem = backStackEntry.value?.destination?.hierarchy?.any { it.route == item.route } == true
             NavigationBarItem(
                 icon = {
                     Column(

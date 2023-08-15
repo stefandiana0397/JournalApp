@@ -89,7 +89,6 @@ fun DailyDetailsScreen(
                         image = Icons.Filled.Delete,
                         onClick = {
                             onEvent(DailyEvent.DeleteEntry(journalEntry))
-                            onScreenClose()
                         }
                     )
                 }
@@ -167,7 +166,8 @@ fun MultimediaCarousel(
             model = photos[index],
             contentDescription = "image",
             contentScale = ContentScale.Crop,
-            onSuccess = { showShimmer = false }
+            onSuccess = { showShimmer = false },
+            onError = { showShimmer = false }
         )
     }
     Spacer(modifier = Modifier.height(spacingSmall))
@@ -189,7 +189,8 @@ fun MultimediaCarousel(
                 model = item,
                 contentDescription = "image",
                 contentScale = ContentScale.Crop,
-                onSuccess = { showShimmer = false }
+                onSuccess = { showShimmer = false },
+                onError = { showShimmer = false }
             )
         }
     }

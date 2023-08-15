@@ -45,8 +45,7 @@ class DailyListViewModel @Inject constructor(
                             it.copy(
                                 entries = result.data ?: emptyList(),
                                 isLoading = false,
-                                error = null,
-                                selectedEntry = null
+                                error = null
                             )
                         }
                     }
@@ -56,7 +55,6 @@ class DailyListViewModel @Inject constructor(
                                 entries = result.data ?: emptyList(),
                                 isLoading = false,
                                 error = R.string.error_loading_entries,
-                                selectedEntry = null
                             )
                         }
                     }
@@ -65,8 +63,7 @@ class DailyListViewModel @Inject constructor(
                             it.copy(
                                 entries = result.data ?: emptyList(),
                                 isLoading = true,
-                                error = null,
-                                selectedEntry = null
+                                error = null
                             )
                         }
                     }

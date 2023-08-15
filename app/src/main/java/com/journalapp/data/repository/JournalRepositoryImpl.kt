@@ -24,7 +24,6 @@ class JournalRepositoryImpl @Inject constructor(
 
     private val TAG: String = JournalRepositoryImpl::class.java.simpleName
     override suspend fun getDailyEntries(): Flow<Resource<List<JournalEntry>>> = flow {
-        emit(Resource.Loading())
 
         val entries = journalDao.getJournalEntries()?.toExternal()
         emit(Resource.Loading(data = entries))

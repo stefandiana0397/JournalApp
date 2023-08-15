@@ -2,7 +2,6 @@
 <resources>
 
     <style name="Theme.JournalApp" parent="android:Theme.Material.Light.NoActionBar" >
-<!--        <item name="android:windowTranslucentStatus">false</item>-->
-<!--        <item name="android:statusBarColor">@android:color/background_dark</item>-->
+        <item name="android:windowBackground">@color/primary</item>
     </style>
 </resources>

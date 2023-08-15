@@ -59,6 +59,6 @@ class EntriesDataSource(private val context: Context) {
 
     companion object {
         const val ENTRIES_FILE = "daily.json"
-        private const val SERVICE_LATENCY_IN_MILLIS = 2000L
+        private const val SERVICE_LATENCY_IN_MILLIS = 1000L
     }
 }

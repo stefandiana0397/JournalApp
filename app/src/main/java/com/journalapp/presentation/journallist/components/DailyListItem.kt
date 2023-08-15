@@ -91,7 +91,8 @@ fun DailyListItem(
                     model = journalEntry.photos.first(),
                     contentDescription = "image",
                     contentScale = ContentScale.Crop,
-                    onSuccess = { showShimmer = false }
+                    onSuccess = { showShimmer = false },
+                    onError = { showShimmer = false }
                 )
             }
             if (!journalEntry.tags.isNullOrEmpty()) {

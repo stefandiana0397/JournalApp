@@ -40,7 +40,10 @@ fun Navigation(
             state.selectedEntry?.let { entry ->
                 DailyDetailsScreen(
                     journalEntry = entry,
-                    onEvent = dailyViewModel::onEvent,
+                    onEvent = {
+                        dailyViewModel.onEvent(it)
+                        navController.navigateUp()
+                    },
                     onScreenClose = { navController.navigateUp() }
                 )
             }
