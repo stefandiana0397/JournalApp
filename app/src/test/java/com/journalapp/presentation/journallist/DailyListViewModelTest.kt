@@ -4,7 +4,9 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.journalapp.domain.model.JournalEntry
 import com.journalapp.domain.model.Resource
 import com.journalapp.domain.model.Tag
+import com.journalapp.domain.usecase.DeleteEntry
 import com.journalapp.domain.usecase.GetDailyGratitudeEntries
+import com.journalapp.domain.usecase.SaveEntry
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -46,6 +48,7 @@ class DailyListViewModelTest {
     @Test
     fun `updateEntries success`() = runTest(testDispatcher) {
         val entry = JournalEntry(
+            id = 1,
             date = 1686389015000,
             summary = "I’m grateful for my little brother and how he makes me laugh, even if he distracts me from completing my homework.",
             photos = listOf("https://live.staticflickr.com/65535/53097460011_e2c2d233cf_z.jpg"),
@@ -54,10 +57,12 @@ class DailyListViewModelTest {
 
         val successData = listOf(entry)
         val successFlow: Flow<Resource<List<JournalEntry>>> = flowOf(Resource.Success(successData))
-        val useCase = mockk<GetDailyGratitudeEntries>()
-        coEvery { useCase.execute() } returns successFlow
+        val getDailyGratitudeEntries = mockk<GetDailyGratitudeEntries>()
+        val deleteEntry = mockk<DeleteEntry>()
+        val saveEntry = mockk<SaveEntry>()
+        coEvery { getDailyGratitudeEntries.execute() } returns successFlow
 
-        val viewModel = getTestedViewModel(useCase)
+        val viewModel = getTestedViewModel(getDailyGratitudeEntries, deleteEntry, saveEntry)
         viewModel.onEvent(DailyEvent.GetEntries)
 
         val currentState = viewModel.state.value
@@ -67,7 +72,7 @@ class DailyListViewModelTest {
         assertNull(currentState.selectedEntry)
 
         // Verify that the execute function was called
-        coVerify { useCase.execute() }
+        coVerify { getDailyGratitudeEntries.execute() }
     }
 
     @Test
@@ -75,10 +80,12 @@ class DailyListViewModelTest {
         val errorFlow: Flow<Resource<List<JournalEntry>>> = flowOf(
             Resource.Error("An error occurred.", null)
         )
-        val useCase = mockk<GetDailyGratitudeEntries>()
-        coEvery { useCase.execute() } returns errorFlow
+        val getDailyGratitudeEntries = mockk<GetDailyGratitudeEntries>()
+        val deleteEntry = mockk<DeleteEntry>()
+        val saveEntry = mockk<SaveEntry>()
+        coEvery { getDailyGratitudeEntries.execute() } returns errorFlow
 
-        val viewModel = getTestedViewModel(useCase)
+        val viewModel = getTestedViewModel(getDailyGratitudeEntries, deleteEntry, saveEntry)
         viewModel.onEvent(DailyEvent.GetEntries)
 
         val currentState = viewModel.state.value
@@ -88,16 +95,18 @@ class DailyListViewModelTest {
         assertNull(currentState.selectedEntry)
 
         // Verify that the execute function was called
-        coEvery { useCase.execute() }
+        coEvery { getDailyGratitudeEntries.execute() }
     }
 
     @Test
     fun `updateEntries loading`() = runTest(testDispatcher) {
         val loadingFlow: Flow<Resource<List<JournalEntry>>> = flowOf(Resource.Loading(null))
-        val useCase = mockk<GetDailyGratitudeEntries>()
-        coEvery { useCase.execute() } returns loadingFlow
+        val getDailyGratitudeEntries = mockk<GetDailyGratitudeEntries>()
+        val deleteEntry = mockk<DeleteEntry>()
+        val saveEntry = mockk<SaveEntry>()
+        coEvery { getDailyGratitudeEntries.execute() } returns loadingFlow
 
-        val viewModel = getTestedViewModel(useCase)
+        val viewModel = getTestedViewModel(getDailyGratitudeEntries, deleteEntry, saveEntry)
         viewModel.onEvent(DailyEvent.GetEntries)
 
         val currentState = viewModel.state.value
@@ -107,11 +116,15 @@ class DailyListViewModelTest {
         assertNull(currentState.selectedEntry)
 
         // Verify that the execute function was called
-        coEvery { useCase.execute() }
+        coEvery { getDailyGratitudeEntries.execute() }
     }
 
-    private fun getTestedViewModel(getDailyGratitudeEntries: GetDailyGratitudeEntries) = spyk(
+    private fun getTestedViewModel(
+        getDailyGratitudeEntries: GetDailyGratitudeEntries,
+        deleteEntry: DeleteEntry,
+        saveEntry: SaveEntry
+    ) = spyk(
         recordPrivateCalls = true,
-        objToCopy = DailyListViewModel(getDailyGratitudeEntries)
+        objToCopy = DailyListViewModel(getDailyGratitudeEntries, deleteEntry, saveEntry)
     )
 }
