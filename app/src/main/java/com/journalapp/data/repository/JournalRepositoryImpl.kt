@@ -24,7 +24,6 @@ class JournalRepositoryImpl @Inject constructor(
 
     private val TAG: String = JournalRepositoryImpl::class.java.simpleName
     override suspend fun getDailyEntries(): Flow<Resource<List<JournalEntry>>> = flow {
-
         val entries = journalDao.getJournalEntries()?.toExternal()?.sortedByDescending { it.date }
         emit(Resource.Loading(data = entries))
 
@@ -37,7 +36,9 @@ class JournalRepositoryImpl @Inject constructor(
             emit(Resource.Error("An error occurred, couldn't reach server", entries))
         }
 
-        val newEntries = journalDao.getJournalEntries()?.toExternal()?.sortedByDescending { it.date }
+        val newEntries = journalDao.getJournalEntries()?.toExternal()?.sortedByDescending {
+            it.date
+        }
         emit(Resource.Success(newEntries))
     }.flowOn(Dispatchers.IO)
 
@@ -56,8 +57,8 @@ class JournalRepositoryImpl @Inject constructor(
 
     override suspend fun saveEntry(entry: JournalEntry): Boolean = withContext(Dispatchers.IO) {
         when (dataSource.saveEntryData(entry)) {
-            ResponseType.SUCCESS -> { true}
-            else -> { false}
+            ResponseType.SUCCESS -> { true }
+            else -> { false }
         }
     }
 }

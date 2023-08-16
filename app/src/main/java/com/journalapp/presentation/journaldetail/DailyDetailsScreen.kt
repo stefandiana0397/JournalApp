@@ -33,6 +33,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -67,14 +68,17 @@ fun DailyDetailsScreen(
     journalEntry: JournalEntry,
     onEvent: (DailyEvent) -> Unit,
     onScreenClose: () -> Unit,
-    isLoading: Boolean
+    isLoading: Boolean,
+    modifier: Modifier = Modifier
 ) {
     BackHandler(onBack = onScreenClose)
 
     var editMode by remember { mutableStateOf(false) }
     var text by remember(journalEntry.summary) { mutableStateOf(journalEntry.summary) }
+    val photos = journalEntry.photos
 
     Scaffold(
+        modifier = modifier,
         topBar = {
             AppToolbar(
                 title = {
@@ -170,9 +174,9 @@ fun DailyDetailsScreen(
                     }
                 }
                 item {
-                    if (!journalEntry.photos.isNullOrEmpty()) {
+                    if (!photos.isNullOrEmpty()) {
                         Spacer(modifier = Modifier.height(spacingMedium))
-                        MultimediaCarousel(photos = journalEntry.photos)
+                        MultimediaCarousel(photos = photos)
                     }
                 }
                 item {
@@ -206,10 +210,12 @@ fun MultimediaCarousel(
         initialPageOffsetFraction = 0f,
         pageCount = { photos.size }
     )
+    LaunchedEffect(photos) {
+        pagerState.scrollToPage(0)
+    }
     val scope = rememberCoroutineScope()
     HorizontalPager(
-        state = pagerState,
-        key = { photos[it] }
+        state = pagerState
     ) { index ->
         SubcomposeAsyncImage(
             modifier = Modifier

@@ -8,11 +8,11 @@ import com.journalapp.domain.model.JournalEntry
 import com.journalapp.domain.model.ResponseType
 import com.journalapp.domain.model.Tag
 import com.journalapp.domain.model.TagDeserializer
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 class EntriesDataSource(private val context: Context) {
 

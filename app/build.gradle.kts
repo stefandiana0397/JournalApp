@@ -69,6 +69,8 @@ dependencies {
 
     implementation(libs.compose.navigation)
     implementation(libs.compose.material)
+    implementation(libs.material3.window.size)
+    implementation(libs.window)
 
     // Dagger - Hilt
     implementation(libs.hilt.android)
@@ -93,6 +95,7 @@ dependencies {
     // Coil
     implementation(libs.coil)
     implementation(libs.compose.coil)
+
 
     implementation(libs.androidx.core.ktx)
     testImplementation(libs.junit)

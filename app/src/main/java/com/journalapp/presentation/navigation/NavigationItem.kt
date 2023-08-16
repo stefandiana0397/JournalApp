@@ -2,7 +2,7 @@ package com.journalapp.presentation.navigation
 
 import androidx.compose.runtime.Composable
 
-data class BottomNavigationItem(
+data class NavigationItem(
     val name: String,
     val route: String,
     val selectedIcon: @Composable () -> Unit,

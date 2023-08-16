@@ -56,6 +56,7 @@ fun DailyListScreen(
         { onEvent(DailyEvent.GetEntries) }
     )
     Scaffold(
+        modifier = modifier,
         topBar = {
             AppToolbar(
                 title = { AppToolbarText(text = stringResource(id = R.string.daily_gratitude)) },
@@ -69,10 +70,10 @@ fun DailyListScreen(
             )
         }
     ) { paddingValues ->
-        Box(Modifier.fillMaxSize().pullRefresh(pullRefreshState)) {
+        Box(Modifier.fillMaxSize().padding(paddingValues).pullRefresh(pullRefreshState)) {
             val groupedEntries = groupEntriesByTimeFrame(uiState.entries)
             LazyColumn(
-                modifier = modifier.padding(paddingValues).padding(bottom = spacingLarge)
+                modifier = Modifier.padding(bottom = spacingLarge)
                     .nestedScroll(scrollBehavior.nestedScrollConnection),
                 contentPadding = PaddingValues(
                     start = spacingMedium,

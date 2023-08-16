@@ -3,65 +3,58 @@ package com.journalapp.presentation
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
+import androidx.compose.runtime.collectAsState
 import androidx.core.view.WindowCompat
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
-import com.journalapp.presentation.navigation.BottomNavigation
-import com.journalapp.presentation.navigation.Navigation
-import com.journalapp.presentation.navigation.Screen
+import androidx.lifecycle.flowWithLifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.window.layout.FoldingFeature
+import androidx.window.layout.WindowInfoTracker
+import com.journalapp.presentation.common.DevicePosture
+import com.journalapp.presentation.common.isSeparating
 import com.journalapp.presentation.ui.theme.JournalAppTheme
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
-        setContent {
-            JournalAppTheme {
-                val mainViewModel = hiltViewModel<MainViewModel>()
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    val navController = rememberNavController()
-                    Scaffold(
-                        bottomBar = {
-                            if (showBottomBar(navController)) {
-                                BottomNavigation(navController = navController)
-                            }
-                        },
-                        contentWindowInsets = WindowInsets(top = 0.dp)
-                    ) {
-                        Navigation(
-                            navController = navController,
-                            mainViewModel = mainViewModel,
-                            modifier = Modifier.padding(it)
-                        )
-                    }
+
+        /**
+         * Flow of [DevicePosture] that emits every time there's a change in the windowLayoutInfo
+         */
+        val devicePostureFlow = WindowInfoTracker.getOrCreate(this).windowLayoutInfo(this)
+            .flowWithLifecycle(this.lifecycle)
+            .map { layoutInfo ->
+                val foldingFeature =
+                    layoutInfo.displayFeatures
+                        .filterIsInstance<FoldingFeature>()
+                        .firstOrNull()
+                when {
+                    isSeparating(foldingFeature) ->
+                        DevicePosture.Separating(foldingFeature.bounds, foldingFeature.orientation)
+
+                    else -> DevicePosture.NormalPosture
                 }
             }
-        }
-    }
+            .stateIn(
+                scope = lifecycleScope,
+                started = SharingStarted.Eagerly,
+                initialValue = DevicePosture.NormalPosture
+            )
 
-    @Composable
-    fun showBottomBar(navController: NavHostController): Boolean {
-        val navBackStackEntry by navController.currentBackStackEntryAsState()
-        return when (navBackStackEntry?.destination?.route) {
-            Screen.DailyDetailsScreen.route -> false
-            else -> true
+        setContent {
+            JournalAppTheme {
+                val windowSize = calculateWindowSizeClass(this)
+                val devicePosture = devicePostureFlow.collectAsState().value
+                MainScreen(windowSize.widthSizeClass, devicePosture)
+            }
         }
     }
 }

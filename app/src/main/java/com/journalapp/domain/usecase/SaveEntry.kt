@@ -3,9 +3,9 @@ package com.journalapp.domain.usecase
 import com.journalapp.domain.model.JournalEntry
 import com.journalapp.domain.model.Resource
 import com.journalapp.domain.repository.JournalRepository
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import javax.inject.Inject
 
 class SaveEntry @Inject constructor(
     private val repository: JournalRepository
