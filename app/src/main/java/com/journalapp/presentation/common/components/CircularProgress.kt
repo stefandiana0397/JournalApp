@@ -5,7 +5,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.journalapp.presentation.ui.theme.spacingExtraSmall
 
 @Composable
 fun CircularProgress(modifier: Modifier = Modifier) {

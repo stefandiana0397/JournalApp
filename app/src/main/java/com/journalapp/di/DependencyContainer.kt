@@ -3,9 +3,9 @@ package com.journalapp.di
 import android.app.Application
 import androidx.room.Room
 import com.google.gson.Gson
+import com.journalapp.data.local.LocalDatabase
 import com.journalapp.data.local.converter.StringListConverter
 import com.journalapp.data.local.converter.TagConverter
-import com.journalapp.data.local.LocalDatabase
 import com.journalapp.data.remote.EntriesDataSource
 import com.journalapp.data.repository.JournalRepositoryImpl
 import com.journalapp.data.util.GsonParser
@@ -13,6 +13,7 @@ import com.journalapp.domain.repository.JournalRepository
 import com.journalapp.domain.usecase.DeleteEntry
 import com.journalapp.domain.usecase.GetDailyGratitudeEntries
 import com.journalapp.domain.usecase.LoadJournal
+import com.journalapp.domain.usecase.SaveEntry
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -39,6 +40,12 @@ object DependencyContainer {
     @Singleton
     fun provideDeleteEntry(repository: JournalRepository): DeleteEntry {
         return DeleteEntry(repository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSaveEntry(repository: JournalRepository): SaveEntry {
+        return SaveEntry(repository)
     }
 
     @Provides

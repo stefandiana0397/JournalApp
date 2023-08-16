@@ -5,7 +5,6 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.journalapp.data.local.model.JournalEntryEntity
-import com.journalapp.domain.model.Tag
 
 @Dao
 interface JournalDao {
@@ -19,12 +18,7 @@ interface JournalDao {
     suspend fun insertJournalEntries(entries: List<JournalEntryEntity>)
 
     @Query(
-        "DELETE FROM journal WHERE date = :entryDate AND summary = :entrySummary AND photos = :entryPhotos AND tags = :entryTags"
+        "DELETE FROM journal WHERE id = :entryId"
     )
-    suspend fun deleteEntryByProperties(
-        entryDate: Long,
-        entrySummary: String,
-        entryPhotos: List<String>?,
-        entryTags: List<Tag>?
-    )
+    suspend fun deleteEntryById(entryId: Long)
 }

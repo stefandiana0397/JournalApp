@@ -5,6 +5,7 @@
     <string name="daily_gratitude">Daily Gratitude</string>
 
     <string name="error_loading_entries">An unexpected error occurred while loading daily entries.</string>
+    <string name="error_entry">An unexpected error occurred</string>
 
     <string name="this_week">This Week</string>
     <string name="last_week">Last Week</string>

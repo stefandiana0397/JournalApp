@@ -24,6 +24,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.journalapp.R
+import com.journalapp.presentation.ui.theme.spacingMedium
 import com.journalapp.presentation.ui.theme.spacingSmall
 
 @Composable
@@ -63,7 +64,7 @@ fun BottomNavigationBar(
         modifier = modifier,
         containerColor = MaterialTheme.colorScheme.surface,
         contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
-        tonalElevation = spacingSmall
+        tonalElevation = spacingMedium
     ) {
         items.forEachIndexed { index, item ->
             val selectedItem = backStackEntry.value?.destination?.hierarchy?.any { it.route == item.route } == true

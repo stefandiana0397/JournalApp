@@ -9,13 +9,13 @@ import com.journalapp.domain.model.JournalEntry
 import com.journalapp.domain.model.Resource
 import com.journalapp.domain.model.ResponseType
 import com.journalapp.domain.repository.JournalRepository
-import java.io.IOException
-import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
+import java.io.IOException
+import javax.inject.Inject
 
 class JournalRepositoryImpl @Inject constructor(
     private val dataSource: EntriesDataSource,
@@ -25,7 +25,7 @@ class JournalRepositoryImpl @Inject constructor(
     private val TAG: String = JournalRepositoryImpl::class.java.simpleName
     override suspend fun getDailyEntries(): Flow<Resource<List<JournalEntry>>> = flow {
 
-        val entries = journalDao.getJournalEntries()?.toExternal()
+        val entries = journalDao.getJournalEntries()?.toExternal()?.sortedByDescending { it.date }
         emit(Resource.Loading(data = entries))
 
         try {
@@ -37,7 +37,7 @@ class JournalRepositoryImpl @Inject constructor(
             emit(Resource.Error("An error occurred, couldn't reach server", entries))
         }
 
-        val newEntries = journalDao.getJournalEntries()?.toExternal()
+        val newEntries = journalDao.getJournalEntries()?.toExternal()?.sortedByDescending { it.date }
         emit(Resource.Success(newEntries))
     }.flowOn(Dispatchers.IO)
 
@@ -48,9 +48,16 @@ class JournalRepositoryImpl @Inject constructor(
     override suspend fun deleteEntry(entry: JournalEntry) = withContext(Dispatchers.IO) {
         when (dataSource.deleteEntryData(entry)) {
             ResponseType.SUCCESS -> {
-                journalDao.deleteEntryByProperties(entry.date, entry.summary, entry.photos, entry.tags)
+                journalDao.deleteEntryById(entry.id)
             }
             else -> {}
+        }
+    }
+
+    override suspend fun saveEntry(entry: JournalEntry): Boolean = withContext(Dispatchers.IO) {
+        when (dataSource.saveEntryData(entry)) {
+            ResponseType.SUCCESS -> { true}
+            else -> { false}
         }
     }
 }

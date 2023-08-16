@@ -8,7 +8,7 @@ import com.journalapp.domain.model.Tag
 @Entity(tableName = "journal")
 data class JournalEntryEntity(
     @PrimaryKey
-    val id: Long? = null,
+    val id: Long,
     val date: Long,
     val summary: String,
     val photos: List<String>?,
@@ -16,13 +16,14 @@ data class JournalEntryEntity(
 )
 
 fun JournalEntryEntity.toExternal(): JournalEntry {
-    return JournalEntry(date, summary, photos, tags)
+    return JournalEntry(id, date, summary, photos, tags)
 }
 
 fun List<JournalEntryEntity>.toExternal() = map(JournalEntryEntity::toExternal)
 
 fun JournalEntry.toLocal(): JournalEntryEntity {
     return JournalEntryEntity(
+        id = id,
         date = date,
         summary = summary,
         photos = photos,

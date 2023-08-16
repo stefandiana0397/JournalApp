@@ -7,17 +7,19 @@ import com.journalapp.domain.model.JournalEntry
 import com.journalapp.domain.model.Resource
 import com.journalapp.domain.usecase.DeleteEntry
 import com.journalapp.domain.usecase.GetDailyGratitudeEntries
+import com.journalapp.domain.usecase.SaveEntry
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class DailyListViewModel @Inject constructor(
     private val getDailyGratitudeEntries: GetDailyGratitudeEntries,
-    private val deleteEntry: DeleteEntry
+    private val deleteEntry: DeleteEntry,
+    private val saveEntry: SaveEntry
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(DailyState())
@@ -32,6 +34,7 @@ class DailyListViewModel @Inject constructor(
             is DailyEvent.GetEntries -> updateEntries()
             is DailyEvent.SelectEntry -> selectEntry(event.entry)
             is DailyEvent.DeleteEntry -> deleteEntry(event.entry)
+            is DailyEvent.SaveEntry -> saveEntry(event.entry)
             else -> {}
         }
     }
@@ -54,7 +57,7 @@ class DailyListViewModel @Inject constructor(
                             it.copy(
                                 entries = result.data ?: emptyList(),
                                 isLoading = false,
-                                error = R.string.error_loading_entries,
+                                error = R.string.error_loading_entries
                             )
                         }
                     }
@@ -81,6 +84,43 @@ class DailyListViewModel @Inject constructor(
     private fun deleteEntry(entry: JournalEntry) {
         viewModelScope.launch {
             deleteEntry.execute(entry)
+        }
+        updateEntries()
+    }
+
+    private fun saveEntry(entry: JournalEntry) {
+        viewModelScope.launch {
+            saveEntry.execute(entry).collect { result ->
+                when (result) {
+                    is Resource.Success -> {
+                        _state.update {
+                            it.copy(
+                                isLoading = false,
+                                error = null,
+                                selectedEntry = entry
+                            )
+                        }
+                    }
+
+                    is Resource.Error -> {
+                        _state.update {
+                            it.copy(
+                                isLoading = false,
+                                error = R.string.error_entry
+                            )
+                        }
+                    }
+
+                    is Resource.Loading -> {
+                        _state.update {
+                            it.copy(
+                                isLoading = true,
+                                error = null
+                            )
+                        }
+                    }
+                }
+            }
         }
         updateEntries()
     }

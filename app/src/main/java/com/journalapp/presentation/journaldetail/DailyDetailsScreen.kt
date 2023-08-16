@@ -5,8 +5,10 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -20,12 +22,16 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -42,11 +48,11 @@ import androidx.compose.ui.unit.dp
 import coil.compose.SubcomposeAsyncImage
 import com.journalapp.R
 import com.journalapp.domain.model.JournalEntry
-import com.journalapp.domain.usecase.DeleteEntry
 import com.journalapp.presentation.common.AppToolbar
 import com.journalapp.presentation.common.AppToolbarText
 import com.journalapp.presentation.common.EntryFormatter
 import com.journalapp.presentation.common.ToolbarAction
+import com.journalapp.presentation.common.components.CircularProgress
 import com.journalapp.presentation.common.components.TagComponent
 import com.journalapp.presentation.journallist.DailyEvent
 import com.journalapp.presentation.journallist.components.shimmerBrush
@@ -60,9 +66,13 @@ import kotlinx.coroutines.launch
 fun DailyDetailsScreen(
     journalEntry: JournalEntry,
     onEvent: (DailyEvent) -> Unit,
-    onScreenClose: () -> Unit
+    onScreenClose: () -> Unit,
+    isLoading: Boolean
 ) {
     BackHandler(onBack = onScreenClose)
+
+    var editMode by remember { mutableStateOf(false) }
+    var text by remember(journalEntry.summary) { mutableStateOf(journalEntry.summary) }
 
     Scaffold(
         topBar = {
@@ -81,61 +91,105 @@ fun DailyDetailsScreen(
                     )
                 },
                 actions = {
-                    ToolbarAction(
-                        image = Icons.Filled.Edit,
-                        onClick = {}
-                    )
+                    if (!editMode) {
+                        ToolbarAction(
+                            image = Icons.Filled.Edit,
+                            onClick = {
+                                editMode = !editMode
+                            }
+                        )
+                    } else {
+                        ToolbarAction(
+                            image = Icons.Filled.Clear,
+                            onClick = {
+                                editMode = false
+                                text = journalEntry.summary
+                            }
+                        )
+                        ToolbarAction(
+                            image = Icons.Filled.Done,
+                            onClick = {
+                                editMode = false
+                                onEvent(DailyEvent.SaveEntry(journalEntry.copy(summary = text)))
+                                text = journalEntry.summary
+                            }
+                        )
+                    }
                     ToolbarAction(
                         image = Icons.Filled.Delete,
                         onClick = {
                             onEvent(DailyEvent.DeleteEntry(journalEntry))
+                            onScreenClose()
                         }
                     )
                 }
             )
         }
     ) { paddingValues ->
-        LazyColumn(
-            modifier = Modifier.padding(paddingValues).padding(spacingMedium),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.Start
+        Box(
+            modifier = Modifier.padding(paddingValues),
+            contentAlignment = Alignment.TopCenter
         ) {
-            item {
-                Text(
-                    modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Start,
-                    text = EntryFormatter.convertMillisecondsToDate(journalEntry.date),
-                    color = MaterialTheme.colorScheme.outline,
-                    style = MaterialTheme.typography.bodyMedium
-                )
-                Spacer(modifier = Modifier.height(spacingSmall))
-            }
-            item {
-                Text(
-                    modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Start,
-                    text = journalEntry.summary,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    style = MaterialTheme.typography.bodyLarge
-                )
-            }
-            item {
-                if (!journalEntry.photos.isNullOrEmpty()) {
-                    Spacer(modifier = Modifier.height(spacingMedium))
-                    MultimediaCarousel(photos = journalEntry.photos)
+            LazyColumn(
+                modifier = Modifier.fillMaxSize().padding(spacingMedium),
+                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = Alignment.Start
+            ) {
+                item {
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Start,
+                        text = EntryFormatter.convertMillisecondsToDate(journalEntry.date),
+                        color = MaterialTheme.colorScheme.outline,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                    Spacer(modifier = Modifier.height(spacingSmall))
                 }
-            }
-            item {
-                if (!journalEntry.tags.isNullOrEmpty()) {
-                    Spacer(modifier = Modifier.height(spacingMedium))
-                    LazyRow(
-                        horizontalArrangement = Arrangement.spacedBy(spacingSmall)
-                    ) {
-                        items(journalEntry.tags) {item ->
-                            TagComponent(tag = item)
+                item {
+                    if (!editMode) {
+                        Text(
+                            modifier = Modifier.fillMaxWidth(),
+                            textAlign = TextAlign.Start,
+                            text = journalEntry.summary,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                    } else {
+                        TextField(
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = TextFieldDefaults.colors(
+                                focusedTextColor = MaterialTheme.colorScheme.onSurface
+                            ),
+                            maxLines = 50,
+                            textStyle = MaterialTheme.typography.bodyLarge,
+                            value = text,
+                            onValueChange = {
+                                text = it
+                            }
+                        )
+                    }
+                }
+                item {
+                    if (!journalEntry.photos.isNullOrEmpty()) {
+                        Spacer(modifier = Modifier.height(spacingMedium))
+                        MultimediaCarousel(photos = journalEntry.photos)
+                    }
+                }
+                item {
+                    if (!journalEntry.tags.isNullOrEmpty()) {
+                        Spacer(modifier = Modifier.height(spacingMedium))
+                        LazyRow(
+                            horizontalArrangement = Arrangement.spacedBy(spacingSmall)
+                        ) {
+                            items(journalEntry.tags) { item ->
+                                TagComponent(tag = item)
+                            }
                         }
                     }
                 }
+            }
+            if (isLoading) {
+                CircularProgress()
             }
         }
     }

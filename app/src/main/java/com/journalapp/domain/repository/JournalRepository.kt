@@ -9,4 +9,6 @@ interface JournalRepository {
     suspend fun getDailyEntries(): Flow<Resource<List<JournalEntry>>>
     suspend fun loadDailyEntries()
     suspend fun deleteEntry(entry: JournalEntry)
+    suspend fun saveEntry(entry: JournalEntry): Boolean
+
 }

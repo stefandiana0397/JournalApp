@@ -6,6 +6,8 @@ import com.journalapp.domain.model.JournalEntry
 import com.journalapp.domain.model.Tag
 
 data class JournalEntryDto(
+    @SerializedName("entry_id")
+    val id: Long,
     @SerializedName("entry_date")
     val date: Long,
     @SerializedName("entry_summary")
@@ -17,13 +19,14 @@ data class JournalEntryDto(
 )
 
 fun JournalEntryDto.toExternal(): JournalEntry {
-    return JournalEntry(date, summary, photos, tags)
+    return JournalEntry(id, date, summary, photos, tags)
 }
 
 fun List<JournalEntryDto>.toExternal() = map(JournalEntryDto::toExternal)
 
 fun JournalEntryDto.toLocal(): JournalEntryEntity {
     return JournalEntryEntity(
+        id = id,
         date = date,
         summary = summary,
         photos = photos,
@@ -32,3 +35,15 @@ fun JournalEntryDto.toLocal(): JournalEntryEntity {
 }
 
 fun List<JournalEntryDto>.toLocal() = map(JournalEntryDto::toLocal)
+
+fun JournalEntry.toDto(): JournalEntryDto {
+    return JournalEntryDto(
+        id = id,
+        date = date,
+        summary = summary,
+        photos = photos,
+        tags = tags
+    )
+}
+
+fun List<JournalEntry>.toDto() = map(JournalEntry::toDto)
