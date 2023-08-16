@@ -102,7 +102,7 @@ fun DailyListScreen(
                         Text(
                             modifier = Modifier.fillMaxWidth(),
                             textAlign = TextAlign.Start,
-                            text = "No data",
+                            text = stringResource(id = R.string.no_data),
                             color = MaterialTheme.colorScheme.onSurface,
                             style = MaterialTheme.typography.bodyLarge
                         )
